@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "260527336015",
+    "project_id": "otthub-ba9cc",
+    "storage_bucket": "otthub-ba9cc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260527336015:android:c1fce707c8937ec5e3d83a",
+        "android_client_info": {
+          "package_name": "com.example.ott_hub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHL0S4m6Tq9hle47NVHk-HiuU-rin-YDs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

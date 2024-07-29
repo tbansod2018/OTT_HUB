@@ -1,0 +1,35 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "otthub-ba9cc",
+          "appId": "1:260527336015:android:c1fce707c8937ec5e3d83a",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "otthub-ba9cc",
+          "configurations": {
+            "android": "1:260527336015:android:c1fce707c8937ec5e3d83a",
+            "ios": "1:260527336015:ios:55f9efa594c7e713e3d83a"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}
