@@ -15,6 +15,17 @@ class Platformcard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var imageName = "";
+    if (platformName == 'Netflix') {
+      imageName = 'netflix.jpg';
+    } else if (platformName == 'Hotstar') {
+      imageName = 'hotstar.jpeg';
+    } else if (platformName == 'Jio Cinema') {
+      imageName = 'jioCinema.png';
+    } else {
+      imageName = 'primeVideos.png';
+    }
+
     return Container(
       margin: const EdgeInsets.all(5), // Add some margin to the container
       decoration: BoxDecoration(
@@ -41,13 +52,13 @@ class Platformcard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(8.0),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Image(
-                  image: AssetImage('assets/images/ott.png'),
+                  image: AssetImage('assets/images/$imageName'),
                   height: 150,
                   width: double.infinity,
-                  fit: BoxFit.cover, // Make the image cover the available space
+                  fit: BoxFit.fill,
                 ),
               ),
               Container(

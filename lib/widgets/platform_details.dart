@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PlatformDetails extends StatefulWidget {
   const PlatformDetails({super.key, required this.platformName});
@@ -13,8 +16,15 @@ class PlatformDetails extends StatefulWidget {
 
 class _PlatformDetailsState extends State<PlatformDetails> {
   String? _selectedValue;
+  final razorpay = Razorpay();
 
-  void _buySubscription(String platformName, String duration) async {
+  late String _duration;
+  late String _platformName;
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    Fluttertoast.showToast(msg: "Payment Success, visit profile");
+
+    // Add subscription to Firestore
     try {
       final userDocRef = FirebaseFirestore.instance
           .collection('users')
@@ -27,43 +37,26 @@ class _PlatformDetailsState extends State<PlatformDetails> {
       DateTime createdAt = DateTime.now();
       DateTime expiration;
 
-      if (duration == '1 Day') {
+      if (_duration == '1 Day') {
         expiration = createdAt.add(const Duration(days: 1));
-      } else if (duration == '1 Week') {
+      } else if (_duration == '1 Week') {
         expiration = createdAt.add(const Duration(days: 7));
-      } else if (duration == '1 Month') {
+      } else if (_duration == '1 Month') {
         expiration = createdAt.add(const Duration(days: 30));
       } else {
         throw 'Invalid duration';
       }
 
       final newSubscription = {
-        'platform': platformName,
-        'duration': duration,
+        'platform': _platformName,
+        'duration': _duration,
         'createdAt': createdAt,
         'expiration': expiration,
       };
 
-      if (subscriptions.any((sub) => sub['platform'] == platformName)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Subscription already exists'),
-          ),
-        );
-        return;
-      }
-
       subscriptions.add(newSubscription);
 
       await userDocRef.update({'subscriptions': subscriptions});
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Subscription added successfully. Please visit profile',
-          ),
-        ),
-      );
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -75,8 +68,81 @@ class _PlatformDetailsState extends State<PlatformDetails> {
     }
   }
 
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(msg: "Payment Failed");
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    razorpay.clear();
+  }
+
+  void _makePayment(int amount) {
+    var options = {
+      'key': 'rzp_test_GcZZFDPP0jHtC4',
+      'amount': amount,
+      'name': 'OTT HUB',
+      'description': widget.platformName,
+      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'}
+    };
+    razorpay.open(options);
+  }
+
+  void _buySubscription(String platformName, String duration) async {
+    try {
+      // Retrieve the user's document reference
+      final userDocRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid);
+
+      // Fetch the user document
+      final userDoc = await userDocRef.get();
+
+      // Get the user's subscriptions
+      final data = userDoc.data() as Map<String, dynamic>;
+      final List<dynamic> subscriptions = data['subscriptions'] ?? [];
+
+      // Check if the user already has a subscription for the selected platform
+      bool subscriptionExists =
+          subscriptions.any((sub) => sub['platform'] == platformName);
+
+      if (subscriptionExists) {
+        // Show a message if the subscription already exists
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Subscription already exists'),
+          ),
+        );
+        return;
+      }
+
+      // If no existing subscription, proceed to payment
+      int amount = 0;
+      if (duration == '1 Week') {
+        amount = 90;
+      } else if (duration == '1 Month') {
+        amount = 140;
+      } else if (duration == '1 Day') {
+        amount = 60;
+      }
+
+      _duration = duration;
+      _platformName = platformName;
+
+      // Make payment
+      _makePayment(amount);
+    } catch (error) {
+      Fluttertoast.showToast(msg: 'An error occurred');
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+
     return Container(
       alignment: Alignment.center,
       child: Column(

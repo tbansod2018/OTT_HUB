@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ott_hub/screens/user_profile.dart';
 import 'package:ott_hub/widgets/home_content.dart';
+import 'package:ott_hub/widgets/sell_subscription.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -26,6 +27,9 @@ class _HomeState extends State<Home> {
     setState(() {
       _selectedPageIndex = index;
       if (_selectedPageIndex == 1) {
+        _appBarTitle = 'Sell';
+        _content = SellSubscription();
+      } else if (_selectedPageIndex == 2) {
         _appBarTitle = 'Profile';
         _content = const UserProfile();
       } else {
@@ -92,6 +96,10 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: ' Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.sell),
+            label: ' Sell',
           ),
           BottomNavigationBarItem(
             icon: Icon(

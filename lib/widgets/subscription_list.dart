@@ -79,8 +79,8 @@ class SubscriptionList extends StatelessWidget {
                   vertical: 4.0, horizontal: 8.0), // Margin around each tile
               decoration: BoxDecoration(
                 gradient: const LinearGradient(colors: [
-                  Color.fromARGB(255, 170, 233, 228),
-                  Color.fromARGB(255, 238, 182, 167)
+                  Color.fromARGB(255, 207, 229, 228),
+                  Color.fromARGB(255, 235, 191, 179)
                 ]), // Background color of each tile
                 borderRadius: BorderRadius.circular(8.0), // Rounded corners
                 boxShadow: [
